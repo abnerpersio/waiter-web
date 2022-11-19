@@ -55,6 +55,7 @@ export const GlobalStyles = createGlobalStyle`
 
   button {
     cursor: pointer;
+    outline: none;
     font-size: 1rem;
     color: #333;
   }
