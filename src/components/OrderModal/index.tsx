@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import closeIcon from '../../assets/images/close-icon.svg';
+import { ACTION_MAPPING, STATUS_MAPPING } from '../../shared/constants/status';
 import { Order } from '../../types/Order';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { generateImagePath } from '../../utils/image';
@@ -10,17 +11,6 @@ type Props = {
   visible: boolean;
   order: Order | null;
   onClose: () => void;
-};
-
-const STATUS_MAPPING = {
-  WAITING: { icon: '🕑', title: 'Fila de espera' },
-  IN_PRODUCTION: { icon: '👩‍🍳', title: 'Em produção' },
-  DONE: { icon: '✅', title: 'Pronto!' },
-};
-
-const ACTION_MAPPING = {
-  WAITING: { icon: '👩‍🍳', title: 'Iniciar produção' },
-  IN_PRODUCTION: { icon: '✅', title: 'Concluir Pedido' },
 };
 
 export function OrderModal({ visible, order, onClose }: Props) {

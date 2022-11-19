@@ -1,3 +1,4 @@
+import { STATUS_MAPPING } from '../../shared/constants/status';
 import { Order } from '../../types/Order';
 import { OrdersBoard } from '../OrdersBoard';
 import { Container } from './styles';
@@ -33,9 +34,14 @@ const orders: Order[] = [
 export function Orders() {
   return (
     <Container>
-      <OrdersBoard icon="🕑" title="Fila de espera" orders={orders} />
-      <OrdersBoard icon="👩‍🍳" title="Em produção" orders={[]} />
-      <OrdersBoard icon="✅" title="Pronto!" orders={[]} />
+      {Object.entries(STATUS_MAPPING).map(([status, { icon, title }]) => (
+        <OrdersBoard
+          key={status}
+          icon={icon}
+          title={title}
+          orders={orders.filter((order) => status === order.status)}
+        />
+      ))}
     </Container>
   );
 }
