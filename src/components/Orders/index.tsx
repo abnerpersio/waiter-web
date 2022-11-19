@@ -17,6 +17,15 @@ const orders: Order[] = [
           price: 40,
         },
       },
+      {
+        _id: '6376f32ce5114cca7b8d7ce0',
+        quantity: 2,
+        product: {
+          name: 'Frango e catupiry',
+          imagePath: '1668865259405-frango-catupiry.png',
+          price: 12,
+        },
+      },
     ],
   },
 ];
