@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { OrdersService } from '../services/orders';
+import { SocketService } from '../services/socket-service';
 import { Order } from '../types/order';
 
 export function useOrders() {
@@ -15,6 +16,18 @@ export function useOrders() {
     } finally {
       setIsLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    const service = new SocketService();
+
+    const listener = service.io.on('orders@new', (order) => {
+      setOrders((prevOrders) => [...prevOrders, order]);
+    });
+
+    return () => {
+      listener.removeListener();
+    };
   }, []);
 
   useEffect(() => {
