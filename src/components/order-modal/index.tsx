@@ -16,7 +16,9 @@ type Props = {
 export function OrderModal({ visible, order, onClose }: Props) {
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') onClose();
+      if (event.key === 'Escape') {
+        onClose();
+      }
     }
 
     document.addEventListener('keydown', handleKeyDown);

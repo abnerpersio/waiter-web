@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { Order } from '../../types/Order';
-import { OrderModal } from '../OrderModal';
+import { OrderModal } from '../order-modal';
 import { Board, OrdersList } from './styles';
 
 type Props = {
