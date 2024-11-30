@@ -1,6 +1,8 @@
 import { useState } from 'react';
 
-import { Order } from '../../types/Order';
+import { useCancelOrder } from '../../hooks/use-cancel-order';
+import { useUpdateOrderStatus } from '../../hooks/use-update-order-status';
+import { Order } from '../../types/order';
 import { OrderModal } from '../order-modal';
 import { Board, OrdersList } from './styles';
 
@@ -8,25 +10,62 @@ type Props = {
   icon: string;
   title: string;
   orders: Order[];
+  onRefetchOrders: () => void;
 };
 
-export function OrdersBoard({ icon, title, orders }: Props) {
+export function OrdersBoard(props: Props) {
+  const { icon, title, orders, onRefetchOrders } = props;
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  function handleOpenModal(order: Order) {
+  const { mutate: cancelOrder, isLoading: isCanceling } = useCancelOrder({
+    onSucess: () => {
+      setSelectedOrder(null);
+      setIsModalVisible(false);
+      onRefetchOrders();
+    },
+  });
+
+  const { mutate: updateStatus, isLoading: isUpdating } = useUpdateOrderStatus({
+    onSucess: () => {
+      setSelectedOrder(null);
+      setIsModalVisible(false);
+      onRefetchOrders();
+    },
+  });
+
+  const handleCancelOrder = () => {
+    cancelOrder(selectedOrder!);
+  };
+
+  const handleUpdateOrderStatus = () => {
+    updateStatus(selectedOrder!, {
+      status: selectedOrder!.status === 'WAITING' ? 'IN_PRODUCTION' : 'DONE',
+    });
+  };
+
+  const handleOpenModal = (order: Order) => {
     setSelectedOrder(order);
     setIsModalVisible(true);
-  }
+  };
 
-  function handleCloseModal() {
+  const handleCloseModal = () => {
     setSelectedOrder(null);
     setIsModalVisible(false);
-  }
+  };
 
   return (
     <Board>
-      <OrderModal visible={isModalVisible} order={selectedOrder} onClose={handleCloseModal} />
+      <OrderModal
+        visible={isModalVisible}
+        order={selectedOrder}
+        isUpdating={isUpdating}
+        isCanceling={isCanceling}
+        onClose={handleCloseModal}
+        onUpdateOrderStatus={handleUpdateOrderStatus}
+        onCancelOrder={handleCancelOrder}
+      />
 
       <header>
         <span>{icon}</span>
@@ -39,6 +78,7 @@ export function OrdersBoard({ icon, title, orders }: Props) {
           {orders.map((order) => (
             <button type="button" key={order._id} onClick={() => handleOpenModal(order)}>
               <strong>Mesa {order.table}</strong>
+
               <span>
                 {order.products.length} {order.products.length > 1 ? 'itens' : 'item'}
               </span>

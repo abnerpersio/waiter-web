@@ -4,7 +4,7 @@ import { OrdersBoard } from '../orders-board';
 import { Container } from './styles';
 
 export function Orders() {
-  const { orders, isLoading } = useOrders();
+  const { orders, refetch } = useOrders();
 
   return (
     <Container>
@@ -13,6 +13,7 @@ export function Orders() {
           key={status}
           icon={icon}
           title={title}
+          onRefetchOrders={refetch}
           orders={orders.filter((order) => status === order.status)}
         />
       ))}

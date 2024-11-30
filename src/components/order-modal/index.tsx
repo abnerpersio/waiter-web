@@ -2,18 +2,26 @@ import { useEffect } from 'react';
 
 import closeIcon from '../../assets/images/close-icon.svg';
 import { ACTION_MAPPING, STATUS_MAPPING } from '../../shared/constants/status';
-import { Order } from '../../types/Order';
+import { Order } from '../../types/order';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { generateImagePath } from '../../utils/image';
+import { LoadingSpinner } from '../icons/loading-spinner';
 import { Actions, Container, OrderDetails, Overlay } from './styles';
 
 type Props = {
   visible: boolean;
   order: Order | null;
+  isUpdating: boolean;
+  isCanceling: boolean;
   onClose: () => void;
+  onUpdateOrderStatus: () => void;
+  onCancelOrder: () => void;
 };
 
-export function OrderModal({ visible, order, onClose }: Props) {
+export function OrderModal(props: Props) {
+  const { visible, order, isCanceling, isUpdating, onClose, onUpdateOrderStatus, onCancelOrder } =
+    props;
+
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -28,7 +36,11 @@ export function OrderModal({ visible, order, onClose }: Props) {
     };
   }, [onClose]);
 
-  if (!visible || !order) return null;
+  if (!visible || !order) {
+    return null;
+  }
+
+  const isLoading = isUpdating || isCanceling;
 
   const total = order.products
     .map(({ product, quantity }) => product.price * quantity)
@@ -83,14 +95,30 @@ export function OrderModal({ visible, order, onClose }: Props) {
 
           <Actions>
             {order.status !== 'DONE' && (
-              <button type="button" className="primary">
-                <span>{ACTION_MAPPING[order.status].icon}</span>
-                <span>{ACTION_MAPPING[order.status].title}</span>
+              <button
+                type="button"
+                className="primary"
+                onClick={onUpdateOrderStatus}
+                disabled={isLoading}
+              >
+                {isUpdating && <LoadingSpinner />}
+                {!isUpdating && (
+                  <>
+                    <span>{ACTION_MAPPING[order.status].icon}</span>
+                    <span>{ACTION_MAPPING[order.status].title}</span>
+                  </>
+                )}
               </button>
             )}
 
-            <button type="button" className="secondary">
-              <span>Cancelar pedido</span>
+            <button
+              type="button"
+              className="secondary"
+              onClick={onCancelOrder}
+              disabled={isLoading}
+            >
+              {isCanceling && <LoadingSpinner />}
+              {!isCanceling && <span>Cancelar pedido</span>}
             </button>
           </Actions>
         </OrderDetails>
