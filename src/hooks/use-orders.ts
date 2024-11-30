@@ -1,25 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { OrdersService } from '../services/orders';
-import { Order } from '../types/Order';
+import { Order } from '../types/order';
 
 export function useOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    async function listProducts() {
-      try {
-        setIsLoading(true);
-        const result = await new OrdersService().list();
-        setOrders(result?.data);
-      } finally {
-        setIsLoading(false);
-      }
+  const listOrders = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const result = await new OrdersService().list();
+      setOrders(result?.data);
+    } finally {
+      setIsLoading(false);
     }
-
-    listProducts();
   }, []);
 
-  return { orders, isLoading };
+  useEffect(() => {
+    listOrders();
+  }, []);
+
+  return {
+    orders,
+    refetch: listOrders,
+    isLoading,
+  };
 }
