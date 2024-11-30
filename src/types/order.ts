@@ -1,7 +1,9 @@
+type OrderStatus = 'WAITING' | 'IN_PRODUCTION' | 'DONE';
+
 export type Order = {
   _id: string;
   table: string;
-  status: 'WAITING' | 'IN_PRODUCTION' | 'DONE';
+  status: OrderStatus;
   products: {
     _id: string;
     quantity: number;
@@ -11,4 +13,8 @@ export type Order = {
       price: number;
     };
   }[];
+};
+
+export type UpdateOrderStatusPayload = {
+  status: OrderStatus;
 };
